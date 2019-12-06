@@ -1,0 +1,5 @@
+---
+
+- import_playbook: undeploy.yml
+- import_playbook: deploy.yml
+

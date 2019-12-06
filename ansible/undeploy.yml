@@ -1,0 +1,29 @@
+---
+
+- name: Undeploy Playbook
+  hosts: all
+  tasks:
+
+  - name: Getting running python server process id
+    shell: ps aux | grep [t]hirdpartynew.py | awk '{ print $2 }'
+    register: items
+
+  - name: Stopping the python server
+    become: yes
+    shell: "kill {{ item }}"
+    with_items: "{{ items.stdout_lines }}"
+
+  - name: Getting running gunicorn server process id
+    shell: ps aux | grep [g]unicorn | awk '{ print $2 }'
+    register: gunicornItems
+
+  - name: Stopping the gunicorn process
+    become: yes
+    shell: "kill {{ gunicornItems }}"
+    with_items: "{{ gunicornItems.stdout_lines }}"
+
+  - name: Delete existing content dir from host
+    become: yes
+    file:
+      path: /opt/esp
+      state: absent
